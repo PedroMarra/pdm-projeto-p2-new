@@ -47,10 +47,12 @@ Para reproduzir o projeto localmente, realize o clone do [repositório oficial](
 **Atenção:** O backend e o frontend precisam rodar simultaneamente. O script abaixo contém todos os comandos necessários agrupados.
 
 ```bash
-# 1. Clonagem e Acesso ao Diretório
-git clone -b develop [https://github.com/PedroMarra/pdm-projeto-p2-new.git](https://github.com/PedroMarra/pdm-projeto-p2-new.git)
+# 1. Clonagem do repostório
+  git clone https://github.com/PedroMarra/pdm-projeto-p2-new.git
 
 cd gestao-financeira-pdm
+code .
+se não estiver, mude para a branch develop
 
 # 2. Inicialização da API (Backend)
 cd backend
