@@ -1,80 +1,93 @@
+const { PrismaClient } = require('@prisma/client');
 const { z } = require('zod');
+const prisma = new PrismaClient();
 
+// O "molde" do Zod exigido pelo professor para barrar dados errados
 const transactionSchema = z.object({
-  title: z.string().min(3, "O título precisa ter pelo menos 3 letras"),
-  type: z.enum(["income", "expense"], {
-    errorMap: () => ({ message: "O tipo deve ser 'income' ou 'expense'" })
-  }),
-  amount: z.number().positive("O valor deve ser maior que zero"),
-  categoryId: z.number().int().positive("ID da categoria inválido"),
-  date: z.string().datetime("A data deve estar no formato ISO (ex: 2026-05-27T10:00:00Z)")
+  description: z.string().min(1, "A descrição é obrigatória."),
+  value: z.number({ required_error: "O valor é obrigatório.", invalid_type_error: "O valor deve ser um número." }),
+  date: z.string().datetime({ message: "Data inválida." }).or(z.string()), 
+  categoryId: z.string().min(1, "O ID da categoria é obrigatório.")
 });
 
-const db = require('../config/database');
-
 module.exports = {
-  create(req, res) {
-    // 1. O Zod analisa os dados enviados na requisição
-    const validation = transactionSchema.safeParse(req.body);
+  // 1. Listar transações (AGORA COM O CADEADO DE USUÁRIO)
+  async list(req, res) {
+    try {
+      // Descobre quem é o usuário logado
+      const userId = req.userId || req.user?.id || (typeof req.user === 'string' ? req.user : null);
 
-    // 2. Se a validação falhar, barramos na porta e mostramos o erro
-    if (!validation.success) {
-      return res.status(400).json({
-        error: "Dados inválidos",
-        details: validation.error.issues
-      });
-    }
-
-    // 3. Se os dados estiverem perfeitos, nós os separamos
-    const { title, type, amount, categoryId, date } = validation.data;
-
-    // 4. Inserimos na tabela do banco de dados
-    const sql = `INSERT INTO transactions (title, type, amount, categoryId, date) VALUES (?, ?, ?, ?, ?)`;
-    
-    db.run(sql, [title, type, amount, categoryId, date], function(err) {
-      if (err) {
-        console.error("Erro real do SQLite:", err.message);
-        return res.status(500).json({ error: "Erro no banco", detalhe: err.message });
+      if (!userId) {
+        return res.status(401).json({ error: "Utilizador não autenticado." });
       }
-      
-      // 5. Retornamos status 201 (Criado) com os dados e o ID gerado
-      return res.status(201).json({
-        id: this.lastID,
-        title,
-        type,
-        amount,
-        categoryId,
-        date
+
+      // Busca APENAS as transações que pertencem a este userId
+      const transactions = await prisma.transaction.findMany({
+        where: { userId: userId }, // <-- O FILTRO QUE FALTAVA
+        include: { category: true } 
       });
-    });
+      
+      return res.json(transactions);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao listar transações." });
+    }
   },
 
-  // 6. Função para listar as transações (GET)
-  list(req, res) {
-    const sql = `SELECT * FROM transactions`;
-    
-    db.all(sql, [], (err, rows) => {
-      if (err) {
-        return res.status(500).json({ error: "Erro ao buscar transações." });
-      }
-      return res.json(rows); // Devolve a lista toda em JSON
-    });
-  }, // <-- Vírgula separando o list do delete
+  // 2. Criar transação (Com validação Zod)
+  async create(req, res) {
+    try {
+      const { description, value, date, categoryId } = transactionSchema.parse(req.body);
 
-  // 7. Função para deletar uma transação (DELETE)
-  delete(req, res) {
-    const { id } = req.params; // Pega o ID que vem na URL
-    const sql = `DELETE FROM transactions WHERE id = ?`;
-    
-    db.run(sql, [id], function(err) {
-      if (err) {
-        return res.status(500).json({ error: "Erro ao deletar transação." });
+      const userId = req.userId || req.user?.id || (typeof req.user === 'string' ? req.user : null);
+
+      if (!userId) {
+        return res.status(401).json({ error: "Utilizador não autenticado ou token em falta." });
       }
-      // Se "this.changes" for 0, significa que nenhum ID bateu com a busca
-      if (this.changes === 0) {
-        return res.status(404).json({ error: "Transação não encontrada." });
+
+      const newTransaction = await prisma.transaction.create({
+        data: {
+          description,
+          value,
+          date: new Date(date),
+          categoryId,
+          userId
+        },
+        include: { category: true } 
+      });
+
+      return res.status(201).json(newTransaction);
+      
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          error: "Dados inválidos", 
+          details: error.errors 
+        });
       }
-    return res.status(204).send();
-    });
+      console.error(error);
+      return res.status(500).json({ error: "Erro interno no servidor." });
+    }
+  },
+
+  // 3. Excluir transação (BLINDADO)
+  async delete(req, res) {
+    const { id } = req.params;
+    try {
+      const userId = req.userId || req.user?.id || (typeof req.user === 'string' ? req.user : null);
+
+      // Antes de deletar, o Prisma agora verifica se o ID da transação bate COM o ID do usuário dono dela
+      await prisma.transaction.delete({ 
+        where: { 
+          id: id,
+          userId: userId // Impede que o Luiz delete uma transação pelo ID se ela for sua
+        } 
+      });
+      
+      return res.status(204).send();
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao excluir transação." });
+    }
   }
 };

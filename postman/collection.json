@@ -10,6 +10,16 @@
     {
       "name": "Listar Categorias",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRhYjU5MjZlLWUxMTQtNGIyYy05NTEyLTk5MTQwMDU1YjY4NyIsImlhdCI6MTc4MDg3NzY0OCwiZXhwIjoxNzgxNDgyNDQ4fQ.6EKV4jXQP2f0TrUpgdzuBqAQv_NMbhttL8dDaLpmWXE",
+              "type": "string"
+            }
+          ]
+        },
         "method": "GET",
         "header": [],
         "url": {
@@ -29,10 +39,20 @@
     {
       "name": "Tentar Excluir Padrão",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRhYjU5MjZlLWUxMTQtNGIyYy05NTEyLTk5MTQwMDU1YjY4NyIsImlhdCI6MTc4MDg3NzY0OCwiZXhwIjoxNzgxNDgyNDQ4fQ.6EKV4jXQP2f0TrUpgdzuBqAQv_NMbhttL8dDaLpmWXE",
+              "type": "string"
+            }
+          ]
+        },
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/categories/1",
+          "raw": "http://localhost:3000/categories/068f4a5f-9211-4525-957a-bcd897c5e67a",
           "protocol": "http",
           "host": [
             "localhost"
@@ -40,7 +60,7 @@
           "port": "3000",
           "path": [
             "categories",
-            "1"
+            "068f4a5f-9211-4525-957a-bcd897c5e67a"
           ]
         }
       },
@@ -69,11 +89,21 @@
     {
       "name": "POST Criar Transação (Erro Zod)",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRhYjU5MjZlLWUxMTQtNGIyYy05NTEyLTk5MTQwMDU1YjY4NyIsImlhdCI6MTc4MDg3NzY0OCwiZXhwIjoxNzgxNDgyNDQ4fQ.6EKV4jXQP2f0TrUpgdzuBqAQv_NMbhttL8dDaLpmWXE",
+              "type": "string"
+            }
+          ]
+        },
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"title\": \"Oi\",\r\n  \"amount\": -50.00,\r\n  \"categoryId\": 6,\r\n  \"date\": \"2026-05-27T10:00:00Z\"\r\n}",
+          "raw": "{\r\n  \"description\": \"\",\r\n  \"amount\": 150.50,\r\n  \"categoryId\": \"3f913467-d00f-4e00-9950-b1f3fb4f7fab\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -97,11 +127,21 @@
     {
       "name": "POST Criar Transação (Sucesso)",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"title\": \"Salário SITA\",\r\n  \"type\": \"income\",\r\n  \"amount\": 1500.00,\r\n  \"categoryId\": 1,\r\n  \"date\": \"2026-05-27T10:00:00Z\"\r\n}",
+          "raw": "{\r\n  \"description\": \"Abastecer o carro\",\r\n  \"value\": 150.50,\r\n  \"date\": \"2026-06-09T10:00:00.000Z\",\r\n  \"categoryId\": \"c3d42cf6-777e-46d3-b1cc-f3bb84a45312\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -125,6 +165,16 @@
     {
       "name": "GET Listar Transações",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRhYjU5MjZlLWUxMTQtNGIyYy05NTEyLTk5MTQwMDU1YjY4NyIsImlhdCI6MTc4MDg3NzY0OCwiZXhwIjoxNzgxNDgyNDQ4fQ.6EKV4jXQP2f0TrUpgdzuBqAQv_NMbhttL8dDaLpmWXE",
+              "type": "string"
+            }
+          ]
+        },
         "method": "GET",
         "header": [],
         "url": {
@@ -144,10 +194,20 @@
     {
       "name": "DELETE Excluir Transação",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRhYjU5MjZlLWUxMTQtNGIyYy05NTEyLTk5MTQwMDU1YjY4NyIsImlhdCI6MTc4MDg3NzY0OCwiZXhwIjoxNzgxNDgyNDQ4fQ.6EKV4jXQP2f0TrUpgdzuBqAQv_NMbhttL8dDaLpmWXE",
+              "type": "string"
+            }
+          ]
+        },
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/transactions/1",
+          "raw": "http://localhost:3000/transactions/b28c8dad-16e8-4240-91f6-da459fc3cde5",
           "protocol": "http",
           "host": [
             "localhost"
@@ -155,7 +215,7 @@
           "port": "3000",
           "path": [
             "transactions",
-            "1"
+            "b28c8dad-16e8-4240-91f6-da459fc3cde5"
           ]
         }
       },
@@ -183,11 +243,21 @@
     {
       "name": "Criar uma Nova Categoria",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRhYjU5MjZlLWUxMTQtNGIyYy05NTEyLTk5MTQwMDU1YjY4NyIsImlhdCI6MTc4MDg3NzY0OCwiZXhwIjoxNzgxNDgyNDQ4fQ.6EKV4jXQP2f0TrUpgdzuBqAQv_NMbhttL8dDaLpmWXE",
+              "type": "string"
+            }
+          ]
+        },
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"name\": \"health\",\r\n  \"displayName\": \"Saúde\",\r\n  \"icon\": \"favorite\",\r\n  \"background\": \"#FFB6B6\",\r\n  \"isIncome\": false\r\n}",
+          "raw": "{\r\n  \"name\": \"Academia\",\r\n  \"type\": \"despesa\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -211,11 +281,21 @@
     {
       "name": "Atualizar Categoria",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRhYjU5MjZlLWUxMTQtNGIyYy05NTEyLTk5MTQwMDU1YjY4NyIsImlhdCI6MTc4MDg3NzY0OCwiZXhwIjoxNzgxNDgyNDQ4fQ.6EKV4jXQP2f0TrUpgdzuBqAQv_NMbhttL8dDaLpmWXE",
+              "type": "string"
+            }
+          ]
+        },
         "method": "PUT",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"displayName\": \"Saúde e Bem-estar\"\r\n}",
+          "raw": "{\r\n  \"name\": \"Saúde e Bem-estar\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -223,7 +303,7 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/categories/7",
+          "raw": "http://localhost:3000/categories/3f913467-d00f-4e00-9950-b1f3fb4f7fab",
           "protocol": "http",
           "host": [
             "localhost"
@@ -231,31 +311,99 @@
           "port": "3000",
           "path": [
             "categories",
-            "7"
+            "3f913467-d00f-4e00-9950-b1f3fb4f7fab"
           ]
         }
       },
       "response": []
     },
     {
-      "name": "Validar a Trava de Segurança",
+      "name": "POST Criar Usuário",
       "request": {
-        "method": "DELETE",
+        "method": "POST",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Pedro Braga\",\r\n  \"email\": \"pedro@example.com\",\r\n  \"password\": \"senhaforte123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": "http://localhost:3000/categories/1",
+          "raw": "http://localhost:3000/auth/register",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "3000",
           "path": [
-            "categories",
-            "1"
+            "auth",
+            "register"
           ]
         }
       },
       "response": []
+    },
+    {
+      "name": "POST Login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"pedro@example.com\",\r\n  \"password\": \"senhaforte123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": ""
     }
   ]
 }

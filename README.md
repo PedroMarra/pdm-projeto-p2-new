@@ -1,74 +1,69 @@
-# Flux - Sistema de Gestão Financeira
+# Flux - Sistema de Gestão Financeira Inteligente
 
-Repositório do projeto final da disciplina de Programação para Dispositivos Móveis (6º Semestre, Ciência da Computação - Centro Universitário IESB).
+O **Flux** é uma aplicação completa de gestão financeira pessoal projetada para oferecer controle total de receitas, despesas e organização de categorias orçamentárias. O ecossistema é composto por um aplicativo mobile moderno integrado a uma API robusta com persistência em banco de dados relacional e isolamento seguro de dados por usuário.
 
-O Flux é uma aplicação de controle financeiro desenvolvida com foco em usabilidade e performance. A arquitetura foi dividida entre um aplicativo móvel construído em React Native e uma API RESTful em Node.js, garantindo a separação de responsabilidades (SoC) e facilitando a manutenção do código.
-
-## 🛠 Tecnologias e Arquitetura
-
-### Mobile (Frontend)
-- **React Native & Expo**: Desenvolvimento multiplataforma da interface.
-- **Context API**: Gerenciamento de estado global.
-- **React Navigation**: Roteamento e navegação entre fluxos de telas.
-- **AsyncStorage**: Armazenamento em cache no dispositivo móvel.
-- **React Native Chart Kit**: Renderização de dados e métricas financeiras.
-
-### API (Backend) & Banco de Dados
-- **Node.js & Express**: Roteamento e lógica de negócios.
-- **SQLite3**: Banco de dados relacional embarcado. A escolha pelo SQLite se deu pela facilidade de configuração em ambientes de desenvolvimento e testes. Ele elimina a necessidade de instanciar containers ou servidores externos para a avaliação do projeto. O arquivo do banco (`.sqlite`) é gerado e populado automaticamente na raiz do backend durante a primeira execução.
-
-## 📌 Requisitos e Funcionalidades
-- Cadastro e autenticação de usuário local.
-- Registro de transações (receitas e despesas) com categorização.
-- Cálculo de saldo consolidado em tempo real.
-- Visualização gráfica analítica da distribuição de gastos.
-- Persistência de dados integrada e comunicação assíncrona com a API.
-
-## 🧪 Testes de Integração (Postman)
-A estrutura do projeto inclui uma *collection* pré-configurada para validar os endpoints da API de forma isolada, simulando o comportamento do frontend.
-
-**Passos para execução dos testes:**
-1. Abra o aplicativo [Postman](https://www.postman.com/) em sua máquina.
-2. Clique em **Import** (no painel superior esquerdo) e selecione o arquivo da *collection* localizado no repositório.
-3. Certifique-se de que o backend esteja em execução (passo a passo de inicialização abaixo).
-4. A *collection* possui rotas apontando para o ambiente local. Recomenda-se seguir o fluxo lógico de testes:
-   - **1. Usuários (POST):** Teste a criação de um novo usuário e validação de login.
-   - **2. Criar Transação (POST):** Envie o payload JSON para cadastrar receitas e despesas.
-   - **3. Listar Transações (GET):** Verifique se o banco de dados retorna a lista atualizada e o status HTTP `200 OK`.
-   - **4. Deletar Transação (DELETE):** Passe um `id` válido na rota para testar a exclusão física do registro no banco.
-5. Analise as respostas em formato JSON e os status HTTP (`201 Created`, `200 OK`, `400 Bad Request`) para confirmar o funcionamento da lógica de negócios e a persistência no SQLite.
+Este projeto foi desenvolvido como requisito prático para a disciplina no curso de Ciência da Computação (IESB).
 
 ---
 
-## 🚀 Instruções de Execução (Ambiente de Avaliação)
+## 🚀 Arquitetura e Tecnologias
 
-Para reproduzir o projeto localmente, realize o clone do [repositório oficial](https://github.com/PedroMarra/pdm-projeto-p2-new.git) e execute os comandos abaixo. 
+* **Frontend (Mobile):** React Native com Expo, focando em usabilidade e filtros dinâmicos.
+* **Backend (API REST):** Node.js com Express, estruturado em arquitetura MVC.
+* **Banco de Dados & ORM:** MySQL gerenciado pelo Prisma ORM, garantindo persistência e relacionamentos seguros.
+* **Segurança:** Autenticação via JSON Web Tokens (JWT) bloqueando acesso a endpoints protegidos.
+* **Validação:** Zod garantindo a integridade dos dados (Fail-fast pattern).
 
-**Atenção:** O backend e o frontend precisam rodar simultaneamente. O script abaixo contém todos os comandos necessários agrupados.
+---
 
-```bash
-# 1. Clonagem do repostório
-  git clone https://github.com/PedroMarra/pdm-projeto-p2-new.git
+## 🛠️ Funcionalidades Implementadas
 
-cd gestao-financeira-pdm
-code .
-se não estiver, mude para a branch develop
+* **Autenticação e Controle de Acesso:** Telas de login e cadastro validadas, com saudação dinâmica para o usuário autenticado.
+* **Gestão de Transações:** Criação, listagem, edição e exclusão (via toque longo no app) de receitas e despesas.
+* **Categorias Personalizadas e Isoladas:** Usuários podem criar categorias customizadas que ficam visíveis *apenas* em suas respectivas contas, sem interferir no banco de outros usuários.
+* **Travas de Segurança:** O backend impede a exclusão de categorias padrões (ex: Salário, Alimentação) com retorno `HTTP 400 Bad Request`.
+* **Resumo e Gráficos:** Visualização dinâmica dos gastos com filtro funcional por Mês/Ano.
 
-# 2. Inicialização da API (Backend)
+---
+
+## 📦 Como Executar o Projeto
+
+A partir da raiz do projeto, você precisará de terminais separados para rodar a API e o Aplicativo.
+
+### 1. Configurando e Rodando o Backend (API)
+Abra um terminal na raiz do projeto, acesse a pasta do backend e instale as dependências:
+` ` `bash
 cd backend
 npm install
-node src/server.js
+` ` `
+*(Nota: remova os espaços entre as crases ao colar no seu terminal/projeto)*
 
-# =========================================================================
-# PAUSA: Mantenha o terminal acima aberto (ele exibirá a conexão com o SQLite).
-# Abra um NOVO terminal na raiz do projeto (gestao-financeira-pdm) e continue:
-# =========================================================================
+Crie e configure o arquivo `.env` na pasta `backend` com a string de conexão do MySQL (`DATABASE_URL`) e sua chave secreta (`JWT_SECRET`). Em seguida, rode as migrações, popule o banco (seed) e inicie o servidor:
+` ` `bash
+npx prisma migrate dev
+npx prisma db seed
+npm run dev
+` ` `
 
-# 3. Inicialização do Aplicativo (Frontend)
+> **💡 Dica de Visualização (Banco de Dados):** Se quiser visualizar e interagir com as tabelas de forma gráfica, abra um novo terminal na raiz do projeto, acesse a pasta do backend e inicie o Prisma Studio:
+> ` ` `bash
+> cd backend
+> npx prisma studio
+> ` ` `
+
+### 2. Configurando e Rodando o Frontend (Mobile)
+Abra um **novo terminal** na raiz do projeto, acesse a pasta do frontend, instale as dependências e inicie o Expo limpando o cache:
+` ` `bash
 cd frontend
 npm install
-npx expo start -c --tunnel
+npx expo start -c
+` ` `
 
-# Nota: Caso a inicialização com o túnel apresente instabilidade na rede,
-# interrompa o processo (Ctrl + C) e execute apenas: npx expo start
-# Escaneie o Qrcode gerado no terminal do frontend para abrir o projeto no Expo
+---
+
+## 🧪 Testes Automatizados (Postman)
+
+A suíte completa de testes exigida para validação da API está disponível no arquivo `collection.json` localizado na pasta `/postman` na raiz do projeto. Ela cobre o fluxo completo: login, validação de token, manipulação de categorias (com testes de trava de segurança) e transações.
+
+---
+**Desenvolvido por:** Pedro Luiz Marra G. Braga -2312130181-
