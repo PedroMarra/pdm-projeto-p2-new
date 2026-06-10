@@ -1,46 +1,47 @@
-import React, { createContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { Alert } from 'react-native';
+import api from '../services/api';
+import { AuthContext } from './AuthContext';
 
 export const TransactionContext = createContext();
 
 export const TransactionProvider = ({ children }) => {
   const [transactions, setTransactions] = useState([]);
+  const { user } = useContext(AuthContext);
 
-  // 1. CARREGA os dados apenas uma vez ao abrir o aplicativo
-  useEffect(() => {
-    const loadTransactions = async () => {
-      try {
-        const storedData = await AsyncStorage.getItem('@flux_transactions');
-        if (storedData) {
-          setTransactions(JSON.parse(storedData));
-        }
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-      }
-    };
-
-    loadTransactions();
-  }, []);
-
-  // 2. ADICIONA na tela e já SALVA direto na memória do celular
-  const addTransaction = async (transaction) => {
+  const fetchTransactions = async () => {
     try {
-      const newTransactions = [transaction, ...transactions];
-      setTransactions(newTransactions); // Atualiza a tela
-      await AsyncStorage.setItem('@flux_transactions', JSON.stringify(newTransactions)); // Salva no aparelho
+      const response = await api.get('/transactions');
+      // Repassa os dados diretamente do backend, sem tentar formatar palavras antigas!
+      setTransactions(response.data);
     } catch (error) {
-      console.error('Erro ao salvar nova movimentação:', error);
+      console.error('Erro ao carregar dados:', error);
     }
   };
 
-  // 3. DELETA da tela e já ATUALIZA a memória do celular
+  useEffect(() => {
+    if (user) fetchTransactions();
+    else setTransactions([]);
+  }, [user]);
+
   const deleteTransaction = async (id) => {
     try {
-      const newTransactions = transactions.filter(t => t.id !== id);
-      setTransactions(newTransactions); // Atualiza a tela
-      await AsyncStorage.setItem('@flux_transactions', JSON.stringify(newTransactions)); // Salva no aparelho
+      await api.delete(`/transactions/${id}`);
+      setTransactions(prev => prev.filter(t => t.id !== id));
     } catch (error) {
-      console.error('Erro ao deletar movimentação:', error);
+      Alert.alert('Erro', 'Não foi possível excluir.');
+    }
+  };
+
+  const addTransaction = async (transactionData) => {
+    try {
+      await api.post('/transactions', transactionData);
+      await fetchTransactions(); // Atualiza a lista na tela imediatamente
+    } catch (error) {
+      // Pega o erro real do Zod (ex: falta um campo) e exibe na tela para sabermos o que foi
+      const errorMessage = error.response?.data?.error || error.response?.data?.details || error.message;
+      Alert.alert('Erro do Servidor', JSON.stringify(errorMessage));
+      throw error; // Avisa a tela que deu erro para não fechar o modal
     }
   };
 

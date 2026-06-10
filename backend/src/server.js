@@ -1,6 +1,6 @@
+require('dotenv').config(); // Carrega as variáveis do .env
 const express = require('express');
 const cors = require('cors');
-require('./config/database'); 
 
 const app = express();
 const PORT = 3000;
@@ -13,11 +13,15 @@ app.get('/', (req, res) => {
   res.json({ ok: true, name: "gestao-financeira-api" });
 });
 
-// Importando e usando as rotas de Categorias
+// Rotas
+const authRoutes = require('./routes/authRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
-app.use('/categories', categoryRoutes);
 const transactionRoutes = require('./routes/transactionRoutes');
-app.use('/transactions', transactionRoutes);
+
+app.use('/auth', authRoutes); // Rota pública
+app.use('/categories', categoryRoutes); // Rotas protegidas
+app.use('/transactions', transactionRoutes); // Rotas protegidas
+
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
 });
