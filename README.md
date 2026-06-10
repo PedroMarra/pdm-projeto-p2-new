@@ -58,6 +58,20 @@ cd frontend
 npm install
 npx expo start -c
 ` ` `
+> **⚠️ Atenção (Conexão via Celular Físico / Expo Go):** > Para que o aplicativo frontend consiga se comunicar corretamente com a API rodando no seu computador, é necessário apontar para o IP local correto da sua rede Wi-Fi.
+> 
+> Acesse o arquivo `frontend/src/services/api.js` e altere a propriedade `baseURL` substituindo o IP de exemplo pelo IP atual da sua máquina:
+> 
+> ```javascript
+> import axios from 'axios';
+> 
+> const api = axios.create({
+>   // Substitua o IP abaixo pelo IPv4 da sua máquina na rede
+>   baseURL: '[http://192.168.0.254:3000](http://192.168.0.254:3000)', 
+> });
+> 
+> export default api;
+> ```
 
 ---
 
